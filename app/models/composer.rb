@@ -5,6 +5,11 @@ class Composer < ApplicationRecord
 
   before_validation :ensure_display_name
 
+  def normalize!
+    self.page_name = page_name.to_s.gsub(' (composer)', '')
+    save!
+  end
+
   def populate_dates!
     if birth_year.nil? || death_year.nil?
       dates = page.summary.scan( /(\d\d\d\d).*?–.*?(\d\d\d\d)/ )[0]

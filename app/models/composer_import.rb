@@ -10,6 +10,7 @@ class ComposerImport
     load_google_results_counts!
     load_genders!
     composers = Composer.all
+    composers.each(&:normalize!)
     composers.each(&:populate_dates!)
     composers.each(&:populate_wikipedia_page_length!)
     composers.each(&:populate_google_results_count!)
