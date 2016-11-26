@@ -74,6 +74,7 @@ RSpec.describe Composer, type: :model do
     describe '#importance' do
       it 'returns a higher score for more important composers' do
         expect(beethoven.importance).to be > sibelius.importance
+        expect(bach.importance / palestrina.importance).to be > 2.0
       end
     end
   end
