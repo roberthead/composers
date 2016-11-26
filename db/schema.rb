@@ -16,8 +16,9 @@ ActiveRecord::Schema.define(version: 20161124220816) do
   enable_extension "plpgsql"
 
   create_table "composers", force: :cascade do |t|
-    t.string   "page_name"
-    t.string   "display_name"
+    t.string   "name"
+    t.string   "short_name"
+    t.string   "wikipedia_page_name"
     t.string   "primary_era"
     t.integer  "birth_year"
     t.integer  "death_year"

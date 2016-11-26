@@ -1,8 +1,9 @@
 class CreateComposers < ActiveRecord::Migration[5.0]
   def change
     create_table :composers do |t|
-      t.string :page_name
-      t.string :display_name
+      t.string :name
+      t.string :short_name
+      t.string :wikipedia_page_name
       t.string :primary_era
       t.integer :birth_year
       t.integer :death_year

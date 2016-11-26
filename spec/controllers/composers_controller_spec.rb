@@ -8,8 +8,8 @@ RSpec.describe ComposersController, type: :controller do
 
     let(:bach) do
       Composer.create({
-        page_name: "Johann Sebastian Bach",
-        display_name: "JS Bach",
+        wikipedia_page_name: "Johann Sebastian Bach",
+        short_name: "JS Bach",
         primary_era: "Baroque",
         birth_year: 1685,
         death_year: 1750,
@@ -21,8 +21,8 @@ RSpec.describe ComposersController, type: :controller do
 
     let(:mozart) do
       Composer.create({
-        page_name: "Wolfgang Amadeus Mozart",
-        display_name: "Mozart",
+        wikipedia_page_name: "Wolfgang Amadeus Mozart",
+        short_name: "Mozart",
         primary_era: "Classical",
         birth_year: 1756,
         death_year: 1791,
@@ -34,8 +34,8 @@ RSpec.describe ComposersController, type: :controller do
 
     let(:beethoven) do
       Composer.create({
-        page_name: "Ludwig van Beethoven",
-        display_name: "Beethoven",
+        wikipedia_page_name: "Ludwig van Beethoven",
+        short_name: "Beethoven",
         primary_era: "Romantic",
         birth_year: 1770,
         death_year: 1827,
@@ -53,7 +53,7 @@ RSpec.describe ComposersController, type: :controller do
       composers = body[:composers]
       expect(composers.length).to eq 3
       last = composers.last
-      expect(last["display_name"]).to eq "Beethoven"
+      expect(last["short_name"]).to eq "Beethoven"
     end
   end
 end

@@ -1,14 +1,11 @@
 require 'wikipedia'
 
 class Composer < ApplicationRecord
-  validates :page_name, presence: true
+  validates :wikipedia_page_name, presence: true
+  validates :name, presence: true
+  validates :short_name, presence: true
 
-  before_validation :ensure_display_name
-
-  def normalize!
-    self.page_name = page_name.to_s.gsub(' (composer)', '')
-    save!
-  end
+  before_validation :normalize_names
 
   def populate_dates!
     if birth_year.nil? || death_year.nil?
@@ -23,32 +20,22 @@ class Composer < ApplicationRecord
     update_attributes(wikipedia_page_length: page.content.length)
   end
 
-  def populate_google_results_count!
-  end
-
-  def to_s
-    bio
-  end
-
   def bio
-    "#{full_name} (#{life})"
+    "#{name} (#{lifespan})"
   end
 
-  def full_name
-    page_name.gsub(/\s*\(\w+\)/, '')
-  end
-
-  def life
+  def lifespan
     "#{birth_year}–#{death_year}"
   end
 
   private
 
-  def ensure_display_name
-    self.display_name = page_name if display_name.blank?
+  def normalize_names
+    self.name ||= wikipedia_page_name.to_s.gsub(' (composer)', '')
+    self.short_name ||= name.split.last
   end
 
   def page
-    @page ||= Wikipedia.find(page_name)
+    @page ||= Wikipedia.find(wikipedia_page_name)
   end
 end
