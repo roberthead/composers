@@ -13,6 +13,7 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 
 gem 'wikipedia-client'
+gem 'rack-cors', :require => 'rack/cors'
 
 group :development do
   gem 'web-console'
