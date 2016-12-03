@@ -10,7 +10,7 @@ class Composer < ApplicationRecord
   def populate_dates!
     if birth_year.nil? || death_year.nil?
       dates = page.summary.scan( /(\d\d\d\d).*?–.*?(\d\d\d\d)/ )[0]
-      if dates.present?
+      if dates[0].present? and dates[1].present?
         update_attributes(birth_year: dates[0], death_year: dates[1])
       end
     end
@@ -23,8 +23,15 @@ class Composer < ApplicationRecord
   private
 
   def normalize_names
-    self.name ||= wikipedia_page_name.to_s.gsub(' (composer)', '')
-    self.short_name ||= name.split.last
+    self.name = wikipedia_page_name.to_s.gsub(' (composer)', '') if name.blank?
+    names = name.split
+    if short_name.blank? && name.present?
+      if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of'])
+        self.short_name = name
+      else
+        self.short_name = name.split.last
+      end
+    end
   end
 
   def page
