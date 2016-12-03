@@ -20,18 +20,6 @@ class Composer < ApplicationRecord
     update_attributes(wikipedia_page_length: page.content.length)
   end
 
-  def importance
-    google_results_count ** 0.25 + wikipedia_page_length ** 0.25
-  end
-
-  def bio
-    "#{name} (#{lifespan})"
-  end
-
-  def lifespan
-    "#{birth_year}–#{death_year}"
-  end
-
   private
 
   def normalize_names
