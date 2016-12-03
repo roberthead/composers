@@ -2,10 +2,13 @@ require 'wikipedia'
 require 'csv'
 
 class ComposerImport
-  attr_reader :list_page
+  attr_reader :list_page, :page_title
 
-  def initialize
-    @list_page = Wikipedia.find('List_of_classical_music_composers_by_era')
+  DEFAULT_PAGE_TITLE = 'List_of_classical_music_composers_by_era'
+
+  def initialize(page_title = DEFAULT_PAGE_TITLE)
+    @page_title = page_title
+    @list_page = Wikipedia.find(page_title)
     ensure_composers
     load_google_results_counts!
     load_genders!
@@ -15,6 +18,10 @@ class ComposerImport
   end
 
   def ensure_composers
+    ensure_composers_from_timeline_tables
+  end
+
+  def ensure_composers_from_timeline_tables
     Era.all.each do |era|
       list_page.content.scan(/color:#{era.color}\s+text:\[\[(.+?)\]\]/mi).each do |composer_link|
         page_name, short_name = composer_link[0].split(/\|/)
