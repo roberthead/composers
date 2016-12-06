@@ -5,19 +5,26 @@ class Composer < ApplicationRecord
   validates :name, presence: true
   validates :short_name, presence: true
 
-  before_validation :normalize_names
+  has_many :composer_sources
+  has_many :sources, through: :composer_sources
 
-  def populate_dates!
-    if birth_year.nil? || death_year.nil?
+  before_validation :normalize_names
+  before_validation :evaluate_importance
+
+  def populate_dates!(force = false)
+    if birth_year.nil? || death_year.nil? || force
+      return unless page.summary.present?
       dates = page.summary.scan( /(\d\d\d\d).*?–.*?(\d\d\d\d)/ )[0]
-      if dates[0].present? and dates[1].present?
+      if dates && dates[0].present? && dates[1].present?
         update_attributes(birth_year: dates[0], death_year: dates[1])
       end
     end
   end
 
-  def populate_wikipedia_page_length!
-    update_attributes(wikipedia_page_length: page.content.length)
+  def populate_wikipedia_page_length!(force = false)
+    if wikipedia_page_length.nil? || force
+      update_attributes(wikipedia_page_length: page.content.try(:length))
+    end
   end
 
   private
@@ -31,6 +38,12 @@ class Composer < ApplicationRecord
       else
         self.short_name = name.split.last
       end
+    end
+  end
+
+  def evaluate_importance
+    if importance.nil? || wikipedia_page_length_changed? || google_results_count_changed?
+      self.importance = ImportanceEvaluation.new(self).importance
     end
   end
 

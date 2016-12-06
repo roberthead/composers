@@ -2,58 +2,87 @@ require 'wikipedia'
 require 'csv'
 
 class ComposerImport
-  attr_reader :wikipedia_page, :page_title
+  attr_reader :wikipedia_page, :page_title, :source
+
+  ERA_PAGES = %w{List_of_medieval_composers List_of_Renaissance_composers List_of_Baroque_composers List_of_Classical-era_composers List_of_Romantic-era_composers List_of_20th-century_classical_composers}
 
   DEFAULT_PAGE_TITLE = 'List_of_classical_music_composers_by_era'
 
   delegate :content, to: :wikipedia_page
 
+  def self.import_all_wikipedia_pages!
+    new.import!
+    ERA_PAGES.each do |era_page|
+      new(era_page).import!
+    end
+  end
+
   def initialize(page_title = DEFAULT_PAGE_TITLE)
     @page_title = page_title
     @wikipedia_page = Wikipedia.find(page_title)
+    @source = Source.where(url: wikipedia_page.fullurl).first_or_create
   end
 
   def import!
     ensure_composers
     load_google_results_counts!
     load_genders!
-    composers = Composer.all
-    composers.each(&:populate_dates!)
-    composers.each(&:populate_wikipedia_page_length!)
+    Composer.where(birth_year: nil, death_year: nil).find_each(&:populate_dates!)
+    Composer.where(wikipedia_page_length: 0).find_each(&:populate_wikipedia_page_length!)
+    Composer.where(wikipedia_page_length: nil).find_each(&:populate_wikipedia_page_length!)
   end
 
   def ensure_composers
     ensure_composers_from_timeline_tables
     ensure_composers_from_table_list
+    ensure_composers_from_simple_list
   end
 
   def ensure_composers_from_timeline_tables
-    regex = /color:#{era.color}\s+text:\[\[(.+?)\]\]/mi
     Era.all.each do |era|
+      era_color = era.name.first(3)
+      regex = /color:#{era_color}\s+text:\[\[(.+?)\]\]/mi
       content.scan(regex).each do |composer_link|
         page_name, short_name = composer_link[0].split(/\|/)
         short_name ||= page_name
-        Composer.where(wikipedia_page_name: page_name).first_or_initialize do |composer|
+        Composer.where(wikipedia_page_name: page_name).first_or_initialize.tap do |composer|
           composer.update_attributes(short_name: short_name, primary_era: era.name)
+          ComposerSource.where(composer: composer, source: source, era: era.name).first_or_create.touch
         end
       end
     end
   end
 
   def ensure_composers_from_table_list
-    regex = /^\|'?'?\[\[([^\]|]*)\|?(.*)?\]\](.*)\|\|(.*)\|\|(.*)\|\|(.*)/
+    regex = /^\|'?'?\[\[([^\]|]*)\|?(.*)?\]\].*\|\|(.*)\|\|(.*)\|\|(.*)/
     era = Era.from_string(page_title).name
     content.scan(regex).each do |composer_record|
-      wikipedia_page_name, name, birth, death = composer_record
+      wikipedia_page_name, short_name, birth, death = composer_record
       birth_year = date_from_string(birth)
       death_year = date_from_string(death)
-      Composer.where(wikipedia_page_name: wikipedia_page_name).first_or_initialize do |composer|
-        composer.short_name = short_name if composer.short_name.blank?
-        composer.name = name if composer.name.blank?
+      Composer.where(wikipedia_page_name: wikipedia_page_name).first_or_initialize.tap do |composer|
+        composer.short_name = short_name if composer.short_name.blank? && short_name.present?
         composer.birth_year ||= birth_year
         composer.death_year ||= death_year
         composer.save
-        p composer
+        ComposerSource.where(composer: composer, source: source, era: era).first_or_create.touch
+      end
+    end
+  end
+
+  def ensure_composers_from_simple_list
+    regex = /^\*\s*'?'?\[\[([^\]|]*)\|?(.*)?\]\].*\b(\d\d\d\d*)\b.*\b(\d\d\d\d*)\b/
+    era = Era.from_string(page_title).name
+    content.scan(regex).each do |composer_record|
+      wikipedia_page_name, short_name, birth, death = composer_record
+      birth_year = date_from_string(birth)
+      death_year = date_from_string(death)
+      Composer.where(wikipedia_page_name: wikipedia_page_name).first_or_initialize.tap do |composer|
+        composer.short_name = short_name if composer.short_name.blank? && short_name.present?
+        composer.birth_year ||= birth_year
+        composer.death_year ||= death_year
+        composer.save
+        ComposerSource.where(composer: composer, source: source, era: era).first_or_create.touch
       end
     end
   end
@@ -69,8 +98,9 @@ class ComposerImport
   end
 
   def load_genders!
-    Composer.find_each do |composer|
-      gender = page_of_female_composers.content.include?(composer.name) ? 'F' : 'M'
+    female_composers_content = page_of_female_composers.content
+    Composer.where(gender: nil).find_each do |composer|
+      gender = female_composers_content.include?(composer.name) ? 'F' : 'M'
       composer.update_attributes(gender: gender)
     end
   end
@@ -88,27 +118,5 @@ class ComposerImport
 
   def page_of_female_composers
     @page_of_female_composers ||= Wikipedia.find('List of female composers by birth date')
-  end
-end
-
-class Era
-  ERAS = %w{Medieval Renaissance Baroque Classical Romantic Modernist}
-
-  def self.all
-    ERAS.map { |era| new(era) }
-  end
-
-  def self.from_string(string)
-    self.all.detect { |era| string.scan(/#{era.name}/i).present? }
-  end
-
-  attr_reader :name
-
-  def initialize(name)
-    @name = name
-  end
-
-  def color
-    name.first(3)
   end
 end

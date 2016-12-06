@@ -29,5 +29,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'factory_girl_rails'
+  gem 'ffaker'
   gem 'byebug', platform: :mri
 end

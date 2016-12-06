@@ -13,8 +13,8 @@ RSpec.describe ComposersController, type: :controller do
         primary_era: "Baroque",
         birth_year: 1685,
         death_year: 1750,
-        wikipedia_page_length: 137459,
-        google_results_count: 15300000,
+        wikipedia_page_length: 137_459,
+        google_results_count: 484_000,
         gender: "M",
       })
     end
@@ -26,8 +26,8 @@ RSpec.describe ComposersController, type: :controller do
         primary_era: "Classical",
         birth_year: 1756,
         death_year: 1791,
-        wikipedia_page_length: 65478,
-        google_results_count: 14200000,
+        wikipedia_page_length: 65_595,
+        google_results_count: 8_410_000,
         gender: "M",
       })
     end
@@ -40,7 +40,7 @@ RSpec.describe ComposersController, type: :controller do
         birth_year: 1770,
         death_year: 1827,
         wikipedia_page_length: 72456,
-        google_results_count: 14300000,
+        google_results_count: 494_000,
         gender: "M",
       })
     end
