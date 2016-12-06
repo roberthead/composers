@@ -30,11 +30,13 @@ class Composer < ApplicationRecord
   private
 
   def normalize_names
-    self.name = wikipedia_page_name.to_s.gsub(' (composer)', '') if name.blank?
+    self.name = wikipedia_page_name.to_s.gsub(/ \(.+\)/, '') if name.blank?
     names = name.split
     if short_name.blank? && name.present?
       if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of'])
         self.short_name = name
+      elsif names[-1] == "Bach"
+        self.short_name = names[0..-2].map { |name| name.first }.join('') + " Bach"
       else
         self.short_name = name.split.last
       end
