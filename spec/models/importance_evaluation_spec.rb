@@ -84,6 +84,70 @@ RSpec.describe ImportanceEvaluation do
           ImportanceEvaluation.new(sibelius.reload).importance
         }.by(ImportanceEvaluation::SOURCES_FACTOR)
       end
+
+      context 'for royalty' do
+        let(:henry) do
+          Composer.create({
+            "name": "Henry VIII of England",
+            "short_name": "Henry VIII of England",
+            "wikipedia_page_name": "Henry VIII of England",
+            "primary_era": "Renaissance",
+            "birth_year": 1491,
+            "death_year": 1547,
+            "wikipedia_page_length": 126536,
+            "google_results_count": 73800,
+            "gender": "M",
+          })
+        end
+
+        let(:frederick) do
+          Composer.create({
+            "name": "Frederick the Great",
+            "short_name": "Frederick the Great",
+            "wikipedia_page_name": "Frederick the Great",
+            "primary_era": "Classical",
+            "birth_year": 1712,
+            "death_year": 1786,
+            "wikipedia_page_length": 121204,
+            "google_results_count": 258000,
+            "gender": "M",
+          })
+        end
+
+        let(:williams) do
+          Composer.create({
+            "name": "Ralph Vaughan Williams",
+            "short_name": "R Vaughan Williams",
+            "wikipedia_page_name": "Ralph Vaughan Williams",
+            "primary_era": "Modernist",
+            "birth_year": 1872,
+            "death_year": 1958,
+            "wikipedia_page_length": 98269,
+            "google_results_count": 504100,
+            "gender": "M",
+          })
+        end
+
+        let(:salieri) do
+          Composer.create({
+            "name": "Antonio Salieri",
+            "short_name": "Salieri",
+            "wikipedia_page_name": "Antonio Salieri",
+            "primary_era": "Classical",
+            "birth_year": 1750,
+            "death_year": 1825,
+            "wikipedia_page_length": 54132,
+            "google_results_count": 287100,
+            "gender": "M",
+          })
+        end
+
+
+        it 'returns a lower score' do
+          expect(ImportanceEvaluation.new(salieri).importance / ImportanceEvaluation.new(henry).importance).to be > 1.5
+          expect(ImportanceEvaluation.new(williams).importance / ImportanceEvaluation.new(frederick).importance).to be > 1.5
+        end
+      end
     end
   end
 end
