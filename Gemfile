@@ -5,6 +5,7 @@ gem 'coffee-rails', '~> 4.2'
 gem 'haml-rails'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails'
+gem 'mechanize'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.0'
 gem 'rack-cors', :require => 'rack/cors'
@@ -25,7 +26,6 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'factory_girl_rails'
   gem 'ffaker'
-  gem 'mechanize'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
 end
