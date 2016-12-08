@@ -25,7 +25,6 @@ class ComposerImport
 
   def import!
     ensure_composers
-    load_google_results_counts!
     load_genders!
     Composer.where(birth_year: nil, death_year: nil).find_each(&:populate_dates!)
     Composer.where(wikipedia_page_length: 0).find_each(&:populate_wikipedia_page_length!)
@@ -83,16 +82,6 @@ class ComposerImport
         composer.death_year ||= death_year
         composer.save
         ComposerSource.where(composer: composer, source: source, era: era).first_or_create.touch
-      end
-    end
-  end
-
-  def load_google_results_counts!
-    results_counts_filepath = Rails.root.join('db', 'seed_data', 'composer_google_results.csv').to_s
-    CSV.foreach(results_counts_filepath, headers: true, header_converters: :symbol) do |row|
-      composer = Composer.where(name: row[:name]).first
-      if composer
-        composer.update_attributes(google_results_count: row[:google_results_count])
       end
     end
   end
