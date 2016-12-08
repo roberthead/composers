@@ -33,7 +33,9 @@ class Composer < ApplicationRecord
     self.name = wikipedia_page_name.to_s.gsub(/ \(.+\)/, '') if name.blank?
     names = name.split
     if short_name.blank? && name.present?
-      if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of'])
+      if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of', 'the'])
+        self.short_name = name
+      elsif names[-1].in?(%w{I II III IV V VI VII VIII IX X XI XII XIII XIV XV})
         self.short_name = name
       elsif names[-1] == "Bach"
         self.short_name = names[0..-2].map { |name| name.first }.join('') + " Bach"

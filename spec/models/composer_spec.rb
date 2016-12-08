@@ -26,4 +26,33 @@ RSpec.describe Composer, type: :model do
       expect(composer.reload.importance).to be > original_importance
     end
   end
+
+  describe 'name normalization' do
+    describe 'short_name normalization' do
+      it 'defaults to the last name' do
+        composer = FactoryGirl.build(:composer, wikipedia_page_name: "Gordon Sumner")
+        expect { composer.valid? }.to change { composer.short_name }.to("Sumner")
+      end
+
+      it 'handles Bach family members' do
+        composer = FactoryGirl.build(:composer, wikipedia_page_name: "Carl Philipp Emanuel Bach")
+        expect { composer.valid? }.to change { composer.short_name }.to("CPE Bach")
+      end
+
+      it 'recognizes locations' do
+        composer = FactoryGirl.build(:composer, wikipedia_page_name: "Henry VIII of England")
+        expect { composer.valid? }.to change { composer.short_name }.to("Henry VIII of England")
+      end
+
+      it 'recognizes honoraria' do
+        composer = FactoryGirl.build(:composer, wikipedia_page_name: "Alexander the Great")
+        expect { composer.valid? }.to change { composer.short_name }.to("Alexander the Great")
+      end
+
+      it 'recognizes royalty' do
+        composer = FactoryGirl.build(:composer, wikipedia_page_name: "Henry VIII")
+        expect { composer.valid? }.to change { composer.short_name }.to("Henry VIII")
+      end
+    end
+  end
 end

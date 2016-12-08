@@ -1,8 +1,6 @@
 FactoryGirl.define do
   factory :composer do
-    name { [FFaker::Name.first_name, FFaker::Name.last_name].join(' ') }
-    short_name { |c| c.name.split(/\s/).last }
-    wikipedia_page_name { |c| c.name }
+    wikipedia_page_name { [FFaker::Name.first_name, FFaker::Name.last_name].join(' ') }
 
     trait :with_data do
       primary_era { ([nil] + Era::ERAS).sample }
