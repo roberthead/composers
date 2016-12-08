@@ -4,6 +4,10 @@ class ComposersController < ApplicationController
     birth_years = composers.pluck(:birth_year)
     earliest_birth_year = birth_years.min
     latest_birth_year = birth_years.max
-    render json: { composers: composers, earliest_birth_year: earliest_birth_year, latest_birth_year: latest_birth_year }
+    render json: {
+      composers: composers.sort_by(&:birth_year),
+      earliest_birth_year: earliest_birth_year,
+      latest_birth_year: latest_birth_year
+    }
   end
 end
