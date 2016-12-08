@@ -5,7 +5,7 @@ class ComposersController < ApplicationController
     earliest_birth_year = birth_years.min
     latest_birth_year = birth_years.max
     render json: {
-      composers: composers.sort_by(&:birth_year),
+      composers: composers,
       earliest_birth_year: earliest_birth_year,
       latest_birth_year: latest_birth_year
     }
