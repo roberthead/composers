@@ -3,7 +3,7 @@ class ComposersController < ApplicationController
     composers = Composer.where.not(birth_year: nil).
       where.not(death_year: nil).
       where("death_year > ?", 1100).
-      order(importance: :desc).limit(150)
+      order(importance: :desc).limit(200)
     birth_years = composers.pluck(:birth_year)
     death_years = composers.pluck(:death_year)
     render json: {
