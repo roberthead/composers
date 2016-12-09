@@ -18,8 +18,8 @@
 
 let url = 'http://composers-api.herokuapp.com/composers.json'
 let earliestBirthYear, latestDeathYear, yearsTotal, pixelsPerYear
-let stageWidth = 1600
-let stageHeight = 900
+let stageWidth = 3000
+let stageHeight = 750
 let eraColor = {
   medieval: "#55BB55",
   renaissance: "#55BBBB",
@@ -91,20 +91,20 @@ function parseData(dataset) {
 
 function renderTimeline(offset) {
   let svgContainer = d3.select('svg')
+  let sideMargin = 25
 
   svgContainer.append('line')
-    .attr('x1', 25)
+    .attr('x1', sideMargin)
     .attr('y1', offset)
-    .attr('x2', 1575)
+    .attr('x2', stageWidth - sideMargin)
     .attr('y2', offset)
     .attr('stroke', '#555555')
     .attr('stroke-width', 1.5)
     .attr('class', 'timeline')
 
   let elementClass = "century-mark-" + offset
-  let centuryMarks = svgContainer.selectAll("line." + elementClass).data(
-    [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
-  )
+  let dataset = [1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
+  let centuryMarks = svgContainer.selectAll("line." + elementClass).data(dataset)
 
   centuryMarks.enter().append('line')
     .attr('x1', function (year) { return xForYear(year) })
@@ -114,6 +114,19 @@ function renderTimeline(offset) {
     .attr('stroke', '#555555')
     .attr('stroke-width', 1)
     .attr('class', elementClass)
+
+  elementClass = "century-text-" + offset
+  let texts = svgContainer.selectAll('text.' + elementClass).data(dataset)
+
+  texts.enter().append('text')
+    .attr('x', function(year) { return xForYear(year) + 5 })
+    .attr('y', offset - 3)
+    .text(function(year) { return year })
+    .attr("font-family", "Open Sans, sans-serif")
+    .attr("font-size", 12)
+    .attr('class', elementClass)
+
+    // .attr("text-anchor", "middle")
 }
 
 function xForYear(year) {
