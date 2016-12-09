@@ -6,7 +6,7 @@ class ImportanceEvaluation < Struct.new(:composer)
   SOURCES_FACTOR = 2
   ROYALTY_INDICATORS = [
     "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "XII", "XIII", "XIV", "XV", "XVI",
-    "Great", "Princess"
+    "Great", "Princess", "Prince"
   ]
 
   def importance
