@@ -38,8 +38,9 @@ class Composer < ApplicationRecord
 
   def normalize_names
     self.name = wikipedia_page_name.to_s.gsub(/ \(.+\)/, '') if name.blank?
-    names = name.split
+    self.short_name = nil if short_name && short_name.scan(']]').present?
     if short_name.blank? && name.present?
+      names = name.split
       if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of', 'the'])
         self.short_name = name
       elsif names[-1].in?(%w{I II III IV V VI VII VIII IX X XI XII XIII XIV XV})
