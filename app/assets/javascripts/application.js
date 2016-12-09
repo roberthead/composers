@@ -42,42 +42,35 @@ function updateGraph(dataset) {
   let lifespan
 
   lifelines.enter().append('line')
-    .attr('x1', function(composer) {
-      return xForYear(composer.birth_year)
-    })
-    .attr('y1', function (composer, index) {
-      return yForIndex(index)
-    })
-    .attr('x2', function(composer) {
-      return xForYear(composer.death_year)
-    })
-    .attr('y2', function(composer, index) {
-      return yForIndex(index)
-    })
-    .attr('stroke', function (composer) {
-      return eraColor[composer.primary_era.toLowerCase()]
-    })
-    .attr('stroke-width', function (composer) {
-      return 2
-    })
+    .attr('x1', function(composer) { return xForYear(composer.birth_year) })
+    .attr('y1', function (composer, index) { return yForIndex(index) })
+    .attr('x2', function(composer) { return xForYear(composer.death_year) })
+    .attr('y2', function(composer, index) { return yForIndex(index) })
+    .attr('stroke', function (composer) { return eraColor[composer.primary_era.toLowerCase()] })
+    .attr('stroke-width', 1.5)
     .attr('class', 'lifeline')
     .style('opacity', 1)
 
   texts.enter().append('text')
-    .attr('x', function(composer) {
-      console.log(composer.birth_year + " at " + xForYear(composer.birth_year))
-      return xForYear(composer.birth_year)
-    })
-    .attr('y', function(composer, index) {
-      console.log(", " + yForIndex(index) - 3)
-      return yForIndex(index) - 3
-    })
+    .attr('x', function(composer) { return xForYear(composer.birth_year) })
+    .attr('y', function(composer, index) { return yForIndex(index) - 3 })
     .text(function(composer) { console.log(composer.name); return composer.name })
-    .attr("font-family", "Open Sans, sans-serif")
+    .attr("font-family", "Avenir, Open Sans, sans-serif")
     .attr("font-size", function (composer) {
-      return composer.importance
+      return composer.importance / 2
     })
     .attr('class', 'composer-name')
+    .style('fill', function (composer) {
+      if (composer.importance > 40) {
+        return '#000000'
+      } else if (composer.importance > 30) {
+        return '#333333'
+      } else if (composer.importance > 20) {
+        return '#777777'
+      } else {
+        return '#AAAAAA'
+      }
+    })
 }
 
 function parseData(dataset) {
@@ -94,7 +87,7 @@ function parseData(dataset) {
 
 function renderTimeline(offset) {
   let svgContainer = d3.select('svg')
-  let sideMargin = 25
+  let sideMargin = 5
 
   svgContainer.append('line')
     .attr('x1', sideMargin)
@@ -125,7 +118,7 @@ function renderTimeline(offset) {
     .attr('x', function(year) { return xForYear(year) + 5 })
     .attr('y', offset - 3)
     .text(function(year) { return year })
-    .attr("font-family", "Open Sans, sans-serif")
+    .attr("font-family", "Avenir, Open Sans, sans-serif")
     .attr("font-size", 12)
     .attr('class', textElementClass)
 }
