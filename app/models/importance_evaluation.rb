@@ -4,7 +4,10 @@ class ImportanceEvaluation < Struct.new(:composer)
   GOOGLE_RESULTS_COUNT_EXPONENT = 0.23
   WIKIPEDIA_PAGE_LENGTH_EXPONENT = 0.25
   SOURCES_FACTOR = 2
-  ROYALTY_INDICATORS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "XII", "XIII", "XIV", "XV", "XVI", "Great"]
+  ROYALTY_INDICATORS = [
+    "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "XII", "XIII", "XIV", "XV", "XVI",
+    "Great", "Princess"
+  ]
 
   def importance
     (
