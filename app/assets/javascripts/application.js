@@ -17,7 +17,7 @@
 //= require_tree .
 
 let url = 'http://composers-api.herokuapp.com/composers.json'
-let earliestBirthYear, latestDeathYear, yearsTotal, pixelsPerYear
+let earliestBirthYear, latestDeathYear, yearsTotal
 let stageWidth = 3000
 let stageHeight = 750
 let eraColor = {
@@ -78,7 +78,6 @@ function parseData(dataset) {
   earliestBirthYear = dataset.earliest_birth_year
   latestDeathYear = dataset.latest_death_year
   yearsTotal = latestDeathYear - earliestBirthYear
-  pixelsPerYear = stageWidth / yearsTotal
 
   renderTimeline(25)
   renderTimeline(stageHeight - 25)
@@ -124,15 +123,20 @@ function renderTimeline(offset) {
 }
 
 function xForYear(year) {
-  return (year - earliestBirthYear) * pixelsPerYear
+  let linearValue = (year - earliestBirthYear) * stageWidth / yearsTotal
+  let exponent = 1.3
+  let ratio = stageWidth / Math.pow(stageWidth, exponent)
+  return Math.pow(linearValue, exponent) * ratio
 }
 
 function yForIndex(index) {
   let topMargin = 75
-  let bottomMargin = 25
+  let bottomMargin = 50
   let height = stageHeight - topMargin - bottomMargin
   let lineHeight = 25
-  return topMargin + (index * lineHeight) % height
+  let columns = Math.floor((index * lineHeight) / height)
+  let columnOffset = 0 // (columns % 2) * lineHeight / 2
+  return topMargin + (index * lineHeight) % height + columnOffset
 }
 
 d3.json(url, parseData)
