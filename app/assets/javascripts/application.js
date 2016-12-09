@@ -33,7 +33,7 @@ let updateGraph = function(dataset) {
   //select a specific set of objects inside of the dataset
   let svgContainer = d3.select('svg')
 
-  let lifelines = svgContainer.selectAll('line').data(dataset)
+  let lifelines = svgContainer.selectAll('line.lifeline').data(dataset)
   let texts = svgContainer.selectAll('text').data(dataset)
 
   let currentY = 0
@@ -61,6 +61,7 @@ let updateGraph = function(dataset) {
     .attr('stroke-width', function (composer) {
       return 2
     })
+    .attr('class', 'lifeline')
     .style('opacity', 1)
 
   texts.enter().append('text')
@@ -86,10 +87,36 @@ var parseData = function(dataset) {
   yearsTotal = latestDeathYear - earliestBirthYear
 
   // render timeline
-  let pixelsPerYear = stageWidth.to_f / yearsTotal
+  let pixelsPerYear = stageWidth / yearsTotal
   let svgContainer = d3.select('svg')
   let centuryMarkData = [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
-  let centuryMarks = svgContainer.selectAll('line').data(centuryMarkData)
+  let centuryMarks = svgContainer.selectAll('line.century-mark').data(centuryMarkData)
+
+  svgContainer.append('line')
+    .attr('x1', 0)
+    .attr('y1', 15)
+    .attr('x2', 1600)
+    .attr('y2', 15)
+    .attr('stroke', 'black')
+    .attr('stroke-width', 1.5)
+    .attr('class', 'timeline')
+
+  centuryMarks.enter().append('line')
+    .attr('x1', function (year) {
+      let years = year - earliestBirthYear
+      console.log("x1: " + (years * pixelsPerYear))
+      return years * pixelsPerYear
+    })
+    .attr('y1', function (year) { return 10 })
+    .attr('x2', function (year) {
+      let years = year - earliestBirthYear
+      console.log("x2: " + (years * pixelsPerYear))
+      return years * pixelsPerYear
+    })
+    .attr('y2', function (year) { return 20 })
+    .attr('stroke', function (composer) { return 'black' })
+    .attr('stroke-width', function (composer) { return 1 })
+    .attr('class', 'century-mark')
 
   //now render the visual
   updateGraph(composers);
