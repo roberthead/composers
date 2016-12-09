@@ -63,6 +63,7 @@ class ComposerImport
         composer.short_name = short_name if composer.short_name.blank? && short_name.present?
         composer.birth_year ||= birth_year
         composer.death_year ||= death_year
+        composer.primary_era ||= era
         composer.save
         ComposerSource.where(composer: composer, source: source, era: era).first_or_create.touch
       end
@@ -80,6 +81,7 @@ class ComposerImport
         composer.short_name = short_name if composer.short_name.blank? && short_name.present?
         composer.birth_year ||= birth_year
         composer.death_year ||= death_year
+        composer.primary_era ||= era
         composer.save
         ComposerSource.where(composer: composer, source: source, era: era).first_or_create.touch
       end
