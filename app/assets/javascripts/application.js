@@ -17,9 +17,8 @@
 //= require_tree .
 
 let url = 'http://composers-api.herokuapp.com/composers.json'
-let earliestBirthYear, latestDeathYear, yearsTotal
+let earliestBirthYear, latestDeathYear, yearsTotal, pixelsPerYear
 let stageWidth = 1600
-
 let eraColor = {
   medieval: "#55BB55",
   renaissance: "#55BBBB",
@@ -83,17 +82,14 @@ function parseData(dataset) {
   earliestBirthYear = dataset.earliest_birth_year
   latestDeathYear = dataset.latest_death_year
   yearsTotal = latestDeathYear - earliestBirthYear
+  pixelsPerYear = stageWidth / yearsTotal
 
-  drawTimeline()
+  renderTimeline()
   updateGraph(composers)
 }
 
-function drawTimeline() {
-  // render timeline
-  let pixelsPerYear = stageWidth / yearsTotal
+function renderTimeline() {
   let svgContainer = d3.select('svg')
-  let centuryMarkData = [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
-  let centuryMarks = svgContainer.selectAll('line.century-mark').data(centuryMarkData)
 
   svgContainer.append('line')
     .attr('x1', 25)
@@ -104,17 +100,17 @@ function drawTimeline() {
     .attr('stroke-width', 1.5)
     .attr('class', 'timeline')
 
+  let centuryMarks = svgContainer.selectAll('line.century-mark').data(
+    [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
+  )
+
   centuryMarks.enter().append('line')
     .attr('x1', function (year) {
-      let years = year - earliestBirthYear
-      console.log("x1: " + (years * pixelsPerYear))
-      return years * pixelsPerYear
+      return xForYear(year)
     })
     .attr('y1', 20)
     .attr('x2', function (year) {
-      let years = year - earliestBirthYear
-      console.log("x2: " + (years * pixelsPerYear))
-      return years * pixelsPerYear
+      return xForYear(year)
     })
     .attr('y2', 30)
     .attr('stroke', 'black')
@@ -122,4 +118,8 @@ function drawTimeline() {
     .attr('class', 'century-mark')
 }
 
-d3.json(url, parseData);
+function xForYear(year) {
+  return (year - earliestBirthYear) * pixelsPerYear
+}
+
+d3.json(url, parseData)
