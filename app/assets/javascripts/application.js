@@ -18,8 +18,8 @@
 
 let url = 'http://composers-api.herokuapp.com/composers.json'
 let earliestBirthYear, latestDeathYear, yearsTotal
-let stageWidth = 3000
-let stageHeight = 750
+let stageWidth = 3200
+let stageHeight = 1200
 let eraColor = {
   medieval: "#55BB55",
   renaissance: "#55BBBB",
@@ -153,8 +153,8 @@ function xForYear(year) {
 }
 
 function yForIndex(index) {
-  let topMargin = 75
-  let bottomMargin = 50
+  let topMargin = 100
+  let bottomMargin = 25
   let height = stageHeight - topMargin - bottomMargin
   let lineHeight = 25
   let columns = Math.floor((index * lineHeight) / height)
