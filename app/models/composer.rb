@@ -7,6 +7,7 @@ class Composer < ApplicationRecord
 
   has_many :composer_sources
   has_many :sources, through: :composer_sources
+  has_many :google_counts, -> { order :updated_at }
 
   before_validation :normalize_names
   before_validation :evaluate_importance
@@ -24,6 +25,12 @@ class Composer < ApplicationRecord
   def populate_wikipedia_page_length!(force = false)
     if wikipedia_page_length.nil? || force
       update_attributes(wikipedia_page_length: page.content.try(:length))
+    end
+  end
+
+  def populate_google_results_count!(force = false)
+    if google_results_count.nil? || force
+      update_attributes(google_results_count: google_counts.last.try(:results_count))
     end
   end
 
