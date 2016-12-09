@@ -34,6 +34,11 @@ class Composer < ApplicationRecord
     end
   end
 
+  def fetch_google_results_count!
+    GoogleFetch.new(self).fetch!
+    populate_google_results_count!(:force)
+  end
+
   private
 
   def normalize_names
