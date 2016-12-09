@@ -34,7 +34,7 @@ function updateGraph(dataset) {
   let svgContainer = d3.select('svg')
 
   let lifelines = svgContainer.selectAll('line.lifeline').data(dataset)
-  let texts = svgContainer.selectAll('text').data(dataset)
+  let texts = svgContainer.selectAll('text.composer-name').data(dataset)
 
   let currentY = 0
   let age, ellapsedPortion = 0
@@ -65,16 +65,19 @@ function updateGraph(dataset) {
 
   texts.enter().append('text')
     .attr('x', function(composer) {
+      console.log(composer.birth_year + " at " + xForYear(composer.birth_year))
       return xForYear(composer.birth_year)
     })
     .attr('y', function(composer, index) {
+      console.log(", " + yForIndex(index) - 3)
       return yForIndex(index) - 3
     })
-    .text(function(composer) { return composer.name })
+    .text(function(composer) { console.log(composer.name); return composer.name })
     .attr("font-family", "Open Sans, sans-serif")
     .attr("font-size", function (composer) {
-      return Math.pow(composer.google_results_count + composer.wikipedia_page_length, 0.23)
+      return composer.importance
     })
+    .attr('class', 'composer-name')
 }
 
 function parseData(dataset) {
@@ -115,8 +118,8 @@ function renderTimeline(offset) {
     .attr('stroke-width', 1)
     .attr('class', elementClass)
 
-  elementClass = "century-text-" + offset
-  let texts = svgContainer.selectAll('text.' + elementClass).data(dataset)
+  let textElementClass = "century-text-" + offset
+  let texts = svgContainer.selectAll('text.' + textElementClass).data(dataset)
 
   texts.enter().append('text')
     .attr('x', function(year) { return xForYear(year) + 5 })
@@ -124,9 +127,7 @@ function renderTimeline(offset) {
     .text(function(year) { return year })
     .attr("font-family", "Open Sans, sans-serif")
     .attr("font-size", 12)
-    .attr('class', elementClass)
-
-    // .attr("text-anchor", "middle")
+    .attr('class', textElementClass)
 }
 
 function xForYear(year) {
