@@ -19,6 +19,7 @@
 let url = 'http://composers-api.herokuapp.com/composers.json'
 let earliestBirthYear, latestDeathYear, yearsTotal, pixelsPerYear
 let stageWidth = 1600
+let stageHeight = 900
 let eraColor = {
   medieval: "#55BB55",
   renaissance: "#55BBBB",
@@ -42,17 +43,16 @@ function updateGraph(dataset) {
 
   lifelines.enter().append('line')
     .attr('x1', function(composer) {
-      return (composer.birth_year - earliestBirthYear) * 2 + 25
+      return xForYear(composer.birth_year)
     })
     .attr('y1', function (composer, index) {
-      return (index * 25) % 800 + 47
+      return yForIndex(index)
     })
     .attr('x2', function(composer) {
-      lifespan = composer.death_year - composer.birth_year;
-      return (composer.birth_year - earliestBirthYear) * 2 + 25 + lifespan * 2
+      return xForYear(composer.death_year)
     })
     .attr('y2', function(composer, index) {
-      return (index * 25) % 800 + 47
+      return yForIndex(index)
     })
     .attr('stroke', function (composer) {
       return eraColor[composer.primary_era.toLowerCase()]
@@ -65,10 +65,10 @@ function updateGraph(dataset) {
 
   texts.enter().append('text')
     .attr('x', function(composer) {
-      return (composer.birth_year - earliestBirthYear) * 2 + 25
+      return xForYear(composer.birth_year)
     })
     .attr('y', function(composer, index) {
-      return (index * 25) % 800 + 45
+      return yForIndex(index) - 3
     })
     .text(function(composer) { return composer.name })
     .attr("font-family", "Open Sans, sans-serif")
@@ -84,42 +84,47 @@ function parseData(dataset) {
   yearsTotal = latestDeathYear - earliestBirthYear
   pixelsPerYear = stageWidth / yearsTotal
 
-  renderTimeline()
+  renderTimeline(25)
+  renderTimeline(stageHeight - 25)
   updateGraph(composers)
 }
 
-function renderTimeline() {
+function renderTimeline(offset) {
   let svgContainer = d3.select('svg')
 
   svgContainer.append('line')
     .attr('x1', 25)
-    .attr('y1', 25)
+    .attr('y1', offset)
     .attr('x2', 1575)
-    .attr('y2', 25)
-    .attr('stroke', 'black')
+    .attr('y2', offset)
+    .attr('stroke', '#555555')
     .attr('stroke-width', 1.5)
     .attr('class', 'timeline')
 
-  let centuryMarks = svgContainer.selectAll('line.century-mark').data(
+  let centuryMarks = svgContainer.selectAll("line.century-mark-#{offset}").data(
     [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
   )
 
   centuryMarks.enter().append('line')
-    .attr('x1', function (year) {
-      return xForYear(year)
-    })
-    .attr('y1', 20)
-    .attr('x2', function (year) {
-      return xForYear(year)
-    })
-    .attr('y2', 30)
-    .attr('stroke', 'black')
+    .attr('x1', function (year) { return xForYear(year) })
+    .attr('y1', offset - 5)
+    .attr('x2', function (year) { return xForYear(year) })
+    .attr('y2', offset + 5)
+    .attr('stroke', '#555555')
     .attr('stroke-width', 1)
     .attr('class', 'century-mark')
 }
 
 function xForYear(year) {
   return (year - earliestBirthYear) * pixelsPerYear
+}
+
+function yForIndex(index) {
+  let topMargin = 75
+  let bottomMargin = 25
+  let height = stageHeight - topMargin - bottomMargin
+  let lineHeight = 25
+  return topMargin + (index * lineHeight) % height
 }
 
 d3.json(url, parseData)
