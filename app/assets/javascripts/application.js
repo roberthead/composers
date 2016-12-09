@@ -101,7 +101,8 @@ function renderTimeline(offset) {
     .attr('stroke-width', 1.5)
     .attr('class', 'timeline')
 
-  let centuryMarks = svgContainer.selectAll("line.century-mark-#{offset}").data(
+  let elementClass = "century-mark-" + offset
+  let centuryMarks = svgContainer.selectAll("line." + elementClass).data(
     [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
   )
 
@@ -112,7 +113,7 @@ function renderTimeline(offset) {
     .attr('y2', offset + 5)
     .attr('stroke', '#555555')
     .attr('stroke-width', 1)
-    .attr('class', 'century-mark')
+    .attr('class', elementClass)
 }
 
 function xForYear(year) {
