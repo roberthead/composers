@@ -14,3 +14,4 @@ The collated data is served by a Ruby on Rails application backed by a postgresq
 
 The visualization is publicly available at http://composers-api.herokuapp.com
 The json feed is available at http://composers-api.herokuapp.com/composers.json
+The code is open source and available at https://github.com/roberthead/composers
