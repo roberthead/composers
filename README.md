@@ -1,24 +1,16 @@
-# README
+# Prime Movers
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+'Prime Movers' (2016) is a data visualization of western classical composers extracted from online data.
 
-Things you may want to cover:
+The intention of the project is to offer a timeline of significant composers selected by algorithm from source data rather than by subjective opinion. Essentially, the assessment of each composer, which is used both for the selection process and for display elements, has been culturally crowd-sourced.
 
-* Ruby version
+The source material has been extracted and scraped from raw, publicly available online data. Composers were programmatically imported from several lists of composers on wikipedia. The relative 'significance' of each composer was then evaluated by several factors:
+- The length of their individual wikipedia page
+- The number of google search results
+- The number of sources that list the composer
+- Designations of royalty, which count against
 
-* System dependencies
+The collated data is served by a Ruby on Rails application backed by a postgresql database. The data visualization is written in javascript using the d3js library.
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+The visualization is publicly available at http://composers-api.herokuapp.com
+The json feed is available at http://composers-api.herokuapp.com/composers.json
