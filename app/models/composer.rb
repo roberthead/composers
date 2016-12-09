@@ -15,6 +15,7 @@ class Composer < ApplicationRecord
   def populate_dates!(force = false)
     if birth_year.nil? || death_year.nil? || force
       return unless page.summary.present?
+      p page.summary
       dates = page.summary.scan( /(\d\d\d\d).*?–.*?(\d\d\d\d)/ )[0]
       if dates && dates[0].present? && dates[1].present?
         update_attributes(birth_year: dates[0], death_year: dates[1])
