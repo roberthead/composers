@@ -53,6 +53,11 @@ RSpec.describe Composer, type: :model do
         composer = FactoryGirl.build(:composer, wikipedia_page_name: "Henry VIII")
         expect { composer.valid? }.to change { composer.short_name }.to("Henry VIII")
       end
+
+      it 'handles section links' do
+        composer = FactoryGirl.build(:composer, wikipedia_page_name: "Leopold I, Holy Roman Emperor#Music")
+        expect { composer.valid? }.to change { composer.name }.to("Leopold I, Holy Roman Emperor")
+      end
     end
   end
 end
