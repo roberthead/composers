@@ -26,7 +26,7 @@ class ComposerImport
   def import!
     ensure_composers
     load_genders!
-    Composer.where(birth_year: nil, death_year: nil).find_each(&:populate_dates!)
+    Composer.where(birth_year: nil).or(Composer.where(death_year: nil)).find_each(&:populate_dates!)
     Composer.where(wikipedia_page_length: 0).find_each(&:populate_wikipedia_page_length!)
     Composer.where(wikipedia_page_length: nil).find_each(&:populate_wikipedia_page_length!)
   end
@@ -53,7 +53,7 @@ class ComposerImport
   end
 
   def ensure_composers_from_table_list
-    regex = /^\|'?'?\[\[([^\]|]*)\|?(.*)?\]\].*\|\|(.*)\|\|(.*)\|\|(.*)/
+    regex = /^\|'?'?\[\[([^\]|]*)\|?(.*)?\]\].*?\|\|(.*?)\|\|(.*?)\|\|(.*)/
     era = Era.from_string(page_title).name
     content.scan(regex).each do |composer_record|
       wikipedia_page_name, short_name, birth, death = composer_record
