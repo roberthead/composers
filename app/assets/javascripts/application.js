@@ -53,8 +53,8 @@ function updateGraph(dataset) {
 
   texts.enter().append('text')
     .attr('x', function(composer) { return xForYear(composer.birth_year) })
-    .attr('y', function(composer, index) { return yForIndex(index) - 3 })
-    .text(function(composer) { console.log(composer.name); return composer.name })
+    .attr('y', function(composer, index) { return yForIndex(index) - 4 })
+    .text(function(composer) { return composer.name })
     .attr("font-family", "Avenir, Open Sans, sans-serif")
     .attr("font-size", function (composer) {
       return composer.importance / 2
@@ -81,7 +81,30 @@ function parseData(dataset) {
 
   renderTimeline(25)
   renderTimeline(stageHeight - 25)
+  renderEras(50)
   updateGraph(composers)
+}
+
+function renderEras(offset) {
+  eras = [
+    { middle_year: 1250, name: "Medieval", color: eraColor.medieval },
+    { middle_year: 1450, name: "Renaissance", color: eraColor.renaissance },
+    { middle_year: 1675, name: "Baroque", color: eraColor.baroque },
+    { middle_year: 1775, name: "Classical", color: eraColor.classical },
+    { middle_year: 1850, name: "Romantic", color: eraColor.romantic },
+    { middle_year: 1950, name: "20th Century", color: eraColor.modernist }
+  ]
+  let svgContainer = d3.select('svg')
+  let eraTexts = svgContainer.selectAll("text.era").data(eras)
+  eraTexts.enter().append('text')
+    .attr('text-anchor', 'middle')
+    .attr('x', function(era) { return xForYear(era.middle_year) })
+    .attr('y', offset)
+    .text(function(era) { return era.name })
+    .attr("font-family", "Avenir, Open Sans, sans-serif")
+    .attr("font-size", 20)
+    .attr('class', 'era')
+    .style('fill', function (era) { return era.color })
 }
 
 function renderTimeline(offset) {
@@ -135,7 +158,7 @@ function yForIndex(index) {
   let height = stageHeight - topMargin - bottomMargin
   let lineHeight = 25
   let columns = Math.floor((index * lineHeight) / height)
-  let columnOffset = 0 // (columns % 2) * lineHeight / 2
+  let columnOffset = 0 // (columns % 2) * 2 // lineHeight / 2
   return topMargin + (index * lineHeight) % height + columnOffset
 }
 
