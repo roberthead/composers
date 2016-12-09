@@ -21,12 +21,12 @@ let earliestBirthYear, latestDeathYear, yearsTotal
 let stageWidth = 1600
 
 let eraColor = {
-  medieval: "#339933",
-  renaissance: "#339999",
-  baroque: "#999933",
-  classical: "#993333",
-  romantic: "#993399",
-  modernist: "#333399"
+  medieval: "#55BB55",
+  renaissance: "#55BBBB",
+  baroque: "#BBBB55",
+  classical: "#BB5555",
+  romantic: "#BB55BB",
+  modernist: "#5555BB"
 }
 
 function updateGraph(dataset) {
