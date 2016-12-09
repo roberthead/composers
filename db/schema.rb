@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161206061642) do
+ActiveRecord::Schema.define(version: 20161209060248) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,14 @@ ActiveRecord::Schema.define(version: 20161206061642) do
     t.decimal  "importance",            precision: 8, scale: 2
   end
 
+  create_table "google_counts", force: :cascade do |t|
+    t.integer  "results_count"
+    t.integer  "composer_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["composer_id"], name: "index_google_counts_on_composer_id", using: :btree
+  end
+
   create_table "sources", force: :cascade do |t|
     t.string   "url"
     t.datetime "created_at", null: false
@@ -48,4 +56,5 @@ ActiveRecord::Schema.define(version: 20161206061642) do
 
   add_foreign_key "composer_sources", "composers"
   add_foreign_key "composer_sources", "sources"
+  add_foreign_key "google_counts", "composers"
 end

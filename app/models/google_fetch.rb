@@ -12,14 +12,14 @@ class GoogleFetch
     @agent = Mechanize.new
   end
 
-  def update!
+  def fetch!
     name_count = mechanize_results_for_name(composer.name)
     short_name_count = mechanize_results_for_name(composer.short_name)
     total = Integer(name_count) + Integer(short_name_count)
     puts "#{composer.name} google results count: #{total}"
-    self.composer.update_attributes(google_results_count: total)
+    GoogleCount.create(composer: composer, results_count: total)
   rescue
-    puts "Unable to update #{composer.name}"
+    puts "Unable to fetch google results count for #{composer.name}"
     nil
   end
 
@@ -33,7 +33,7 @@ class GoogleFetch
     page = agent.submit(google_form)
     page.search("#resultStats").text.scan(RESULTS_REGEX)[0][0].gsub(',', '_').to_i
   rescue
-    puts "Unable to find google results for #{name}"
+    puts "Unable to fetch google results count for #{name}"
     nil
   end
 end
