@@ -26,7 +26,7 @@ class GoogleFetch
   private
 
   def mechanize_results_for_name(name)
-    sleep rand(3) + 1
+    sleep rand(5) + 3
     page = agent.get('https://www.google.com/')
     google_form = page.form('f')
     google_form.q = "\"#{name}\" composer"
