@@ -21,15 +21,15 @@ let earliestBirthYear, latestDeathYear, yearsTotal
 let stageWidth = 1600
 
 let eraColor = {
-  renaissance: "#339933",
+  medieval: "#339933",
+  renaissance: "#339999",
   baroque: "#999933",
   classical: "#993333",
   romantic: "#993399",
   modernist: "#333399"
 }
 
-//This function contains the logic for rendering our image from a dataset
-let updateGraph = function(dataset) {
+function updateGraph(dataset) {
   //select a specific set of objects inside of the dataset
   let svgContainer = d3.select('svg')
 
@@ -78,14 +78,17 @@ let updateGraph = function(dataset) {
     })
 }
 
-// this function contains the logic for changing the data
-var parseData = function(dataset) {
-  //use any logic to parse/update your data here
+function parseData(dataset) {
   composers = dataset.composers
   earliestBirthYear = dataset.earliest_birth_year
   latestDeathYear = dataset.latest_death_year
   yearsTotal = latestDeathYear - earliestBirthYear
 
+  drawTimeline()
+  updateGraph(composers)
+}
+
+function drawTimeline() {
   // render timeline
   let pixelsPerYear = stageWidth / yearsTotal
   let svgContainer = d3.select('svg')
@@ -93,10 +96,10 @@ var parseData = function(dataset) {
   let centuryMarks = svgContainer.selectAll('line.century-mark').data(centuryMarkData)
 
   svgContainer.append('line')
-    .attr('x1', 0)
-    .attr('y1', 15)
-    .attr('x2', 1600)
-    .attr('y2', 15)
+    .attr('x1', 25)
+    .attr('y1', 25)
+    .attr('x2', 1575)
+    .attr('y2', 25)
     .attr('stroke', 'black')
     .attr('stroke-width', 1.5)
     .attr('class', 'timeline')
@@ -107,19 +110,16 @@ var parseData = function(dataset) {
       console.log("x1: " + (years * pixelsPerYear))
       return years * pixelsPerYear
     })
-    .attr('y1', function (year) { return 10 })
+    .attr('y1', 20)
     .attr('x2', function (year) {
       let years = year - earliestBirthYear
       console.log("x2: " + (years * pixelsPerYear))
       return years * pixelsPerYear
     })
-    .attr('y2', function (year) { return 20 })
-    .attr('stroke', function (composer) { return 'black' })
-    .attr('stroke-width', function (composer) { return 1 })
+    .attr('y2', 30)
+    .attr('stroke', 'black')
+    .attr('stroke-width', 1)
     .attr('class', 'century-mark')
-
-  //now render the visual
-  updateGraph(composers);
 }
 
 d3.json(url, parseData);
