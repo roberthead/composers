@@ -5,6 +5,43 @@ RSpec.describe Composer, type: :model do
   it { is_expected.to validate_presence_of :wikipedia_page_name }
   it { is_expected.to validate_presence_of :short_name }
 
+  describe '.by_name' do
+    let!(:dvorak) do
+      FactoryGirl.create(:composer, {
+        name: "Antonín Dvořák",
+        short_name: "Dvořák",
+        wikipedia_page_name: "Antonín Dvořák",
+        primary_era: "Romantic",
+        birth_year: 1841,
+        death_year: 1904,
+        wikipedia_page_length: 78517,
+        google_results_count: 378000,
+        gender: "M"
+      })
+    end
+
+    let!(:moulinie) do
+      FactoryGirl.create(:composer, {
+        id: 3627,
+        name: "Etienne Moulinie",
+        short_name: "Moulinie",
+        wikipedia_page_name: "Etienne Moulinie",
+        birth_year: 1599,
+        death_year: 1676,
+        wikipedia_page_length: 2356,
+        gender: "M",
+      })
+    end
+
+    it 'finds a composer when searched without diacriticals' do
+      expect(Composer.by_name('Dvorak')).to eq dvorak
+    end
+
+    it 'finds a composer when searched with new diacriticals' do
+      expect(Composer.by_name('Étienne Moulinié')).to eq moulinie
+    end
+  end
+
   describe '#importance' do
     let(:composer) { FactoryGirl.create(:composer, wikipedia_page_length: 10000) }
 

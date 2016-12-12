@@ -3,7 +3,7 @@ require 'wikipedia'
 class Composer < ApplicationRecord
   validates :wikipedia_page_name, presence: true
   validates :name, presence: true
-  validates :short_name, presence: true
+  validates :short_name, presence: true, uniqueness: true
 
   has_many :composer_sources
   has_many :sources, through: :composer_sources
@@ -11,6 +11,13 @@ class Composer < ApplicationRecord
 
   before_validation :normalize_names
   before_validation :evaluate_importance
+
+  def self.by_name(name)
+    Composer
+      .where(transliterated_name: I18n.transliterate(name))
+      .or(Composer.where(transliterated_short_name: name))
+      .first
+  end
 
   def populate_dates!(force = false)
     if birth_year.nil? || death_year.nil? || force
@@ -43,20 +50,30 @@ class Composer < ApplicationRecord
   private
 
   def normalize_names
-    self.name = wikipedia_page_name.to_s.gsub(/ \(.+\)/, '') if name.blank?
+    # extract name from wikipedia page name
+    self.name = name.presence || wikipedia_page_name.to_s.gsub(/ \(.+\)/, '')
+    # remove section header from name
     self.name.gsub!(/#\w+/, '')
-    self.short_name = nil if short_name && short_name.scan(']]').present?
-    if short_name.blank? && name.present?
-      names = name.split
-      if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of', 'the'])
-        self.short_name = name
-      elsif names[-1].in?(%w{I II III IV V VI VII VIII IX X XI XII XIII XIV XV})
-        self.short_name = name
-      elsif names[-1] == "Bach"
-        self.short_name = names[0..-2].map { |name| name.first }.join('') + " Bach"
-      else
-        self.short_name = name.split.last
+    # delete short_name if it contains bad characters
+    self.short_name = nil if short_name.try(:scan, ']]').present?
+    if name.present?
+      # assign simplified name
+      self.transliterated_name = I18n.transliterate(name)
+      # deduce short name from name
+      if short_name.blank?
+        names = name.split
+        if names[-2].to_s.downcase.in?(['de', 'da', 'des', 'of', 'the'])
+          self.short_name = name
+        elsif names[-1].in?(%w{I II III IV V VI VII VIII IX X XI XII XIII XIV XV})
+          self.short_name = name
+        elsif names[-1] == "Bach"
+          self.short_name = names[0..-2].map { |name| name.first }.join('') + " Bach"
+        else
+          self.short_name = name.split.last
+        end
       end
+      # assign simplified short name
+      self.transliterated_short_name = I18n.transliterate(short_name)
     end
   end
 

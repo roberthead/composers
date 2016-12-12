@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161209060248) do
+ActiveRecord::Schema.define(version: 20161212045506) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,9 +35,11 @@ ActiveRecord::Schema.define(version: 20161209060248) do
     t.integer  "wikipedia_page_length"
     t.integer  "google_results_count"
     t.string   "gender"
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
-    t.decimal  "importance",            precision: 8, scale: 2
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+    t.decimal  "importance",                precision: 8, scale: 2
+    t.string   "transliterated_name"
+    t.string   "transliterated_short_name"
   end
 
   create_table "google_counts", force: :cascade do |t|
